@@ -1,118 +1,57 @@
-gameBoard = (function (){
-    const board = ["","","","","","","","",""]
-    const change = function(piece,location){                   
-        board[location] = piece
-        console.log(board)
-        }
-    const clear = function(){
-        for (let i = 0;i < board.length; i++){
-            board[i] = ""
-    }
-}
-    const isLegal = (moveIndex) => {    
-        if (gameBoard.board[moveIndex].length == 0){
-            return true
-        }else {
-            return false
-        }
-    }
-
-     const checkWinner = (piece) => {
-        if (board.at(0) === piece && board.at(1) === piece && board.at(2) === piece){
-            return true
-        }
-        if (board.at(3) === piece && board.at(4) === piece && board.at(5) === piece){
-            return true
-        }
-        if (board.at(6) === piece && board.at(7) === piece && board.at(8) === piece){
-            return true
-        }
-        if (board.at(0) === piece && board.at(3) === piece && board.at(6) === piece){
-            return true
-        }
-        if (board.at(1) === piece && board.at(4) === piece && board.at(7) === piece){
-            return true
-        }
-        if (board.at(2) === piece && board.at(5) === piece && board.at(8) === piece){
-            return true
-        }
-        if (board.at(0) === piece && board.at(4) === piece && board.at(8) === piece){
-            return true
-        }
-        if (board.at(2) === piece && board.at(4) === piece && board.at(6) === piece){
-            return true
-        }
-        return false
-    } 
-
-    return {board,change,clear,isLegal,checkWinner}
-})()
-
-const player = {
-    getSides:(playerPiece) => {
-        if (playerPiece === "X")
-            botPiece = "O"
-        else botPiece = "X"
-        return {playerPiece,botPiece}
+gameBoard = {
+    board:["","","","","","","","",""],
+    change:(piece,index) => {
+            gameBoard.board[index] = piece
     },
-    getHumanMove: (humanMove) => {
-        while (gameBoard.isLegal(humanMove) === false){
-            humanMove = prompt("pick something else")
-        } 
-        return humanMove
-    },
-    getBotMove: () => {
-       botMove = Math.floor(Math.random()*8.9)
-       while (gameBoard.isLegal(botMove) === false){
-        botMove = Math.floor(Math.random()*8.9)
-       }
-        return botMove
+    clear:() => {
+        gameBoard.board.fill("")
     }
-}
- playGame = function(){
-    gameBoard.clear()
-    const sides = player.getSides(prompt("Pick a piece"))
-    console.log(sides)
-    for (let i = 1; i < 10;i++){
-        if (i % 2 != 0){
-            if (sides.playerPiece === "O"){
-                gameBoard.change("O",player.getHumanMove(prompt("1")))
-                if (gameBoard.checkWinner("O")){
-                    console.log("You won!")
-                    return
-                }
-            }else{
-                gameBoard.change("O",player.getBotMove())
-                if (gameBoard.checkWinner("O")){
-                    console.log("You lost!")
-                    return
-                }
+    }
+game = {
+    pause:false,
+    round:1,
+    playRound:(index) => {
+    if (index > 8 || index < 0 || gameBoard.board.at(index) != "" || game.pause === true) {
+        return
+    }
+    if (game.round % 2){
+        gameBoard.change("O",index)             
+        game.checkWinner()
+    }else{
+        gameBoard.change("X",index)                
+        game.checkWinner()
+    }
+    console.log(gameBoard.board)
+    game.round++
+    },
+    reset:() => {
+        gameBoard.board.fill("")
+        round = 1
+        pause = false
+    },
+    winConditions:[
+        [0,1,2],
+        [3,4,5],
+        [6,7,8],
+        [0,3,6],
+        [1,4,7],
+        [2,5,8],
+        [0,4,8],
+        [2,4,6]
+    ],
+    checkWinner:() => {
+        for (let i = 0; i < game.winConditions.length;i++){
+            const condition = game.winConditions[i]
+            const cellA = gameBoard.board[condition[0]]
+            const cellB = gameBoard.board[condition[1]]
+            const cellC = gameBoard.board[condition[2]]
+            if (cellA == "" || cellB == "" || cellC == ""){
+                continue
             }
-           gameBoard.checkWinner("O")
-        }
-        if (i % 2 === 0){
-            if (sides.playerPiece === "X"){
-                gameBoard.change("X",player.getHumanMove(prompt("1")))
-                if (gameBoard.checkWinner("X")){
-                    console.log("You won!")
-                    return
-                }
-            }else{
-                gameBoard.change("X",player.getBotMove())
-            }
-            if (gameBoard.checkWinner("X")){
-                if (gameBoard.checkWinner("X")){
-                    console.log("You Lost!")
-                    return
-                }
-                
+            if (cellA == cellB  && cellB == cellC){
+                console.log(gameBoard.board[condition[2]] + " won!")
+                game.pause = true
             }
         }
-        if (i === 9){
-            console.log("Tie")
-        } 
-        }
-    
-}   
-
-playGame()
+    }
+    }   
