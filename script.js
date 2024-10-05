@@ -7,31 +7,31 @@ gameBoard = {
         gameBoard.board.fill("")
     }
     }
+
 player = {
     O:"O",
-    X:"X"
+    X:"X",
+    changeName:(target,newName) => {
+        if (newName == true){
+        player[target] = newName
+        }
+    }
 }
 game = {
     pause:false,
     round:1,
-    
     playRound:(index) => {
-    if (game.round > 9){
-        pause = true
-        console.log("Draw!")
-        displayHandler.gameStatus.textContent = "Draw!"
-    }
     if (index > 8 || index < 0 || gameBoard.board.at(index) != "" || game.pause == true) {
         return
     }
     if (game.round % 2){
         gameBoard.change("O",index)             
-        game.checkWinner(player.O)
         displayHandler.gameStatus.textContent = player.X + "'s Turn"
+        game.checkWinner(player.O)
     }else{
         gameBoard.change("X",index)                
-        game.checkWinner(player.X)
         displayHandler.gameStatus.textContent = player.O + "'s Turn"
+        game.checkWinner(player.X)
     }
     console.log(gameBoard.board)
     console.log(game.round)
@@ -39,8 +39,8 @@ game = {
     },
     reset:() => {
         gameBoard.board.fill("")
-        round = 1
-        pause = false
+        game.round = 1
+        game.pause = false
     },
     winConditions:[
         [0,1,2],
@@ -64,6 +64,12 @@ game = {
             if (cellA == cellB  && cellB == cellC){
                 displayHandler.gameStatus.textContent = winner + " Wins!"
                 console.log(winner + " Wins!") 
+                game.pause = true
+                return
+            }
+            if (game.round == 9){
+                displayHandler.gameStatus.textContent = "Draw!"
+                console.log("Draw!")
                 game.pause = true
             }
         }
@@ -93,6 +99,17 @@ for (let i = 0; i < 9;i++){
 }
 resetButton = document.querySelector("#reset")
 resetButton.addEventListener("click", () => {
+    game.reset()
     gameBoard.clear()
     displayHandler.refreshBoard()
+})
+p1NameChangeBtn = document.querySelector(".p1Name button")
+p1NameChangeInput = document.querySelector(".p1Name input")
+p2NameChangeBtn = document.querySelector(".p2Name button")
+p2NameChangeInput = document.querySelector(".p2Name input")
+p1NameChangeBtn.addEventListener("click",() => {
+    player.O = p1NameChangeInput.value
+})
+p2NameChangeBtn.addEventListener("click",() => {
+    player.X = p2NameChangeInput.value
 })
