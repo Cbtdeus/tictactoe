@@ -1,0 +1,14 @@
+.boardContainer{
+    margin-right: auto;
+    margin-left: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    width: 450px;
+    height: 450px;
+    border: 2px solid black;
+}
+.boardContainer div{
+    display: grid;
+    border: 2px solid black;
+}
